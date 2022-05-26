@@ -1,6 +1,5 @@
 class Weapon:
 
-    
 
     class Sharpness:
         
@@ -15,38 +14,61 @@ class Weapon:
                 {"name" : "Purple", "attack" : 1.44 ,"element" : 1.20 },
             ]
 
+        def set(self,sharpness):
+            for sharpness_data in self.sharpness:
+                if sharpness_data["name"] == sharpness:
+                    self.name = sharpness_data["name"]
+                    self.attack = sharpness_data["attack"]
+                    self.element = sharpness_data["element"]
+
+        def get(self):
+            return  {
+                    "name" : self.name,
+                    "attack" :self.attack,
+                    "element" : self.element
+                    }
+        
     class Affinity:
+
         pass
 
     class Type:
 
         def __init__(self) -> None:
             self.Types = [
-                {"Name" : "Great Sword", "special_multiplyer" : 5.4},
-                {"Name" : "Long Sword", "special_multiplyer" : 3.3},
-                {"Name" : "Sword and Shield", "special_multiplyer" : 1.4},
-                {"Name" : "Dual Blades", "special_multiplyer" : 1.4},
-                {"Name" : "Lance", "special_multiplyer" : 2.3},
-                {"Name" : "Gunlance", "special_multiplyer" : 2.3},
-                {"Name" : "Hammer", "special_multiplyer" : 5.2},
-                {"Name" : "Hunting Horn", "special_multiplyer" : 5.2},
-                {"Name" : "Insect Glaive", "special_multiplyer" : 3.1},
-                {"Name" : "Charge Blade", "special_multiplyer" : 3.6},
-                {"Name" : "Heavy Bowgun", "special_multiplyer" : 1.5},
-                {"Name" : "Light Bowgun", "special_multiplyer" : 1.3},
-                {"Name" : "Bow", "special_multiplyer" : 1.2}
+                {"Name" : "Great Sword", "Special_multiplyer" : 5.4, "Class" : "Blademaster"},
+                {"Name" : "Long Sword", "Special_multiplyer" : 3.3, "Class" : "Blademaster"},
+                {"Name" : "Sword and Shield", "Special_multiplyer" : 1.4, "Class" : "Blademaster"},
+                {"Name" : "Dual Blades", "Special_multiplyer" : 1.4, "Class" : "Blademaster"},
+                {"Name" : "Lance", "Special_multiplyer" : 2.3, "Class" : "Blademaster"},
+                {"Name" : "Gunlance", "Special_multiplyer" : 2.3, "Class" : "Blademaster"},
+                {"Name" : "Hammer", "Special_multiplyer" : 5.2, "Class" : "Blademaster"},
+                {"Name" : "Hunting Horn", "Special_multiplyer" : 5.2, "Class" : "Blademaster"},
+                {"Name" : "Insect Glaive", "Special_multiplyer" : 3.1, "Class" : "Blademaster"},
+                {"Name" : "Charge Blade", "Special_multiplyer" : 3.6, "Class" : "Blademaster"},
+                {"Name" : "Heavy Bowgun", "Special_multiplyer" : 1.5, "Class" : "Gunner"},
+                {"Name" : "Light Bowgun", "Special_multiplyer" : 1.3, "Class" : "Gunner"},
+                {"Name" : "Bow", "Special_multiplyer" : 1.2, "Class" : "Gunner"}
             ]
-        
+            
         def set(self,type):
-            for weapon in self.Types:
-                if type == weapon["Name"]:
-                    self.name = weapon["Name"]
-                    self.multiplyer = weapon["special_multiplyer"]
-                    return self.multiplyer
+            for weapon_data in self.Types:
+                if type == weapon_data["Name"]:
+                    self.name = weapon_data["Name"]
+                    self.multiplyer = weapon_data["Special_multiplyer"]
+                    self.weapon_class = weapon_data["Class"] 
+
+        def get(self):
+            return {
+                    "Name" : self.name, 
+                    "Class" : self.weapon_class , 
+                    "Special_Multiplyer" : self.multiplyer
+                    }
 
     class Attack:
 
-        class Buffs:
+        class Modifiers:
+
             def __init__(self,real_attack,) -> None:
                 pass
             
@@ -112,34 +134,69 @@ class Weapon:
                 #Latent Power +2 +50% affinity
                 pass
 
-        def set_real(self,weapon_nominal_attack,weapon_special_multiplyer):
+
+        def set(self,weapon_nominal_attack,weapon_special_multiplyer):
             self.nominal_attack = int(weapon_nominal_attack)
             self.special_multiplyer = float(weapon_special_multiplyer)
             self.real_attack = int(self.nominal_attack/self.special_multiplyer)
-            return self.real_attack
 
-        def change_real(self,value):
+        def modify(self,value):
             self.real_attack += int(value)
             self.nominal_attack = int(self.real_attack * self.special_multiplyer)
 
-        def get_real_attack(self):
+        def get(self):
             return self.real_attack
 
-        def get_nominal_attack(self):
-            return self.nominal_attack
 
     def __init__(self) -> None:
-        self.type = self.Type()
-        self.type_multiplyer = self.type.set("Hunting Horn")
+        self.type_is_set = False
+        self.attack_is_set = False
+        self.have_sharpness = False
 
-        self.attack = self.Attack()
-        self.real_attack = self.attack.set_real(624,self.type_multiplyer)
-        
+    def set_type(self,type):
+        self.type = self.Type()
+        self.type_multiplyer = self.type.set(type)
+        self.type_is_set = True
+
+    def set_attack(self,attack):
+        attack = int(attack)
+        if self.type_is_set:
+            self.attack = self.Attack()
+            special_multiplyer = self.type.get()["Special_Multiplyer"]
+            if self.type.get()["Class"] == "Blademaster":
+                attack *= self.sharpness.get()["attack"]
+            self.attack.set(attack,special_multiplyer)
+            self.attack_is_set = True
+        else:
+            print("Error: Type is not set")
+
+    def set_sharpness(self,sharpness):
+        if self.type_is_set and self.type.get()["Class"] == "Blademaster":
+            self.sharpness = self.Sharpness()
+            self.sharpness.set(sharpness)
+
+    def set_affinity(self,affinity):
+        pass
 
 if __name__ == "__main__":
 
+    #test area
     w1 = Weapon()
-    
+    w1.set_type("Great Sword")
+    w1.set_sharpness("Purple")
+    w1.set_attack(1000)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
