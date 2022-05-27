@@ -1,6 +1,5 @@
 class Weapon:
 
-
     class Sharpness:
         
         def __init__(self) -> None:
@@ -30,7 +29,88 @@ class Weapon:
         
     class Affinity:
 
-        pass
+        class modifiers:
+
+            def critical_boost():
+
+                pass
+
+            def crit_element():
+                #35% SNS/DB/Bow
+                #30% LBG/HBG
+                #20% GS
+                #25% other
+                pass
+            
+                        
+            
+
+
+
+            pass
+        
+        def __init__(self) -> None:
+            self.crit_multiplyer = 0.25
+            self.affinity_is_set = False
+
+        def set(self,affinity):
+            self.affinity = int(affinity)
+            if self.affinity > 0:
+                self.crit_bonus = self.crit_multiplyer + 1
+            elif self.affinity < 0:
+                self.crit_bonus = 1 - self.crit_multiplyer
+            else:
+                self.crit_bonus = None
+            self.affinity_is_set = True            
+
+        def get(self):
+            if self.affinity_is_set:
+                return {
+                        "affinity" : self.affinity,
+                        "critical_bonus" : self.crit_bonus
+                        }
+
+    class Element:
+
+        class modify:
+
+            def element_plus():
+                #+1 1.05x + 40 (inflated)
+                #+2 1.10x + 60
+                #+3 1.15x + 90
+                pass
+            
+            def elemental_attack_up():
+                #1.1x but the total cap of multiplications is 1.20
+                pass
+        
+        def __init__(self) -> None:
+            self.element_is_set = False
+            self.second_element_is_set = False
+
+        def set(self,element,amount,sharpness, double = False):
+            self.first_element = element[0]
+            first_amount = int(amount[0])/10
+            self.first_amount = int(first_amount * sharpness)
+            self.element_is_set = True
+
+            if double:
+                self.second_element = element[-1]
+                secound_amount = int(int(amount[-1])/10)
+                self.second_amount = secound_amount * sharpness
+                self.second_element_is_set = True
+
+
+        def get(self):
+            values = {
+                      "element" : self.first_element,
+                      "amount" : self.first_amount,
+                      }
+            if self.second_element_is_set:
+                values["second_element"] = self.second_element
+                values["second_amount"] = self.second_amount
+
+            return values
 
     class Type:
 
@@ -50,6 +130,7 @@ class Weapon:
                 {"Name" : "Light Bowgun", "Special_multiplyer" : 1.3, "Class" : "Gunner"},
                 {"Name" : "Bow", "Special_multiplyer" : 1.2, "Class" : "Gunner"}
             ]
+            self.type_is_set = False
             
         def set(self,type):
             for weapon_data in self.Types:
@@ -57,13 +138,15 @@ class Weapon:
                     self.name = weapon_data["Name"]
                     self.multiplyer = weapon_data["Special_multiplyer"]
                     self.weapon_class = weapon_data["Class"] 
+                    self.type_is_set = True
 
         def get(self):
-            return {
-                    "Name" : self.name, 
-                    "Class" : self.weapon_class , 
-                    "Special_Multiplyer" : self.multiplyer
-                    }
+            if self.type_is_set:    
+                return {
+                        "Name" : self.name, 
+                        "Class" : self.weapon_class , 
+                        "Special_Multiplyer" : self.multiplyer
+                        }
 
     class Attack:
 
@@ -133,19 +216,24 @@ class Weapon:
                 #Latent Power +1 +30% affinity
                 #Latent Power +2 +50% affinity
                 pass
-
+        
+        def __init__(self) -> None:
+            self.attack_is_set = False
 
         def set(self,weapon_nominal_attack,weapon_special_multiplyer):
             self.nominal_attack = int(weapon_nominal_attack)
             self.special_multiplyer = float(weapon_special_multiplyer)
             self.real_attack = int(self.nominal_attack/self.special_multiplyer)
+            self.attack_is_set = True
 
         def modify(self,value):
-            self.real_attack += int(value)
-            self.nominal_attack = int(self.real_attack * self.special_multiplyer)
+            if self.attack_is_set:
+                self.real_attack += int(value)
+                self.nominal_attack = int(self.real_attack * self.special_multiplyer)
 
         def get(self):
-            return self.real_attack
+            if self.attack_is_set:
+                return self.real_attack
 
 
     def __init__(self) -> None:
@@ -157,6 +245,11 @@ class Weapon:
         self.type = self.Type()
         self.type_multiplyer = self.type.set(type)
         self.type_is_set = True
+
+    def set_sharpness(self,sharpness):
+        if self.type_is_set and self.type.get()["Class"] == "Blademaster":
+            self.sharpness = self.Sharpness()
+            self.sharpness.set(sharpness)
 
     def set_attack(self,attack):
         attack = int(attack)
@@ -170,28 +263,28 @@ class Weapon:
         else:
             print("Error: Type is not set")
 
-    def set_sharpness(self,sharpness):
-        if self.type_is_set and self.type.get()["Class"] == "Blademaster":
-            self.sharpness = self.Sharpness()
-            self.sharpness.set(sharpness)
+    def set_elmental(self,element,amount,double = False):
+        self.element = self.Element()
+        self.element.set(element,amount,self.sharpness.get()["element"],double)
 
-    def set_affinity(self,affinity):
-        pass
+
+
+    def set_affinity(self,affinity : int):
+        self.affinity = self.Affinity()
+        self.affinity.set(affinity)
+
 
 if __name__ == "__main__":
 
     #test area
     w1 = Weapon()
     w1.set_type("Great Sword")
-    w1.set_sharpness("Purple")
+    w1.set_sharpness("Green")
     w1.set_attack(1000)
+    w1.set_affinity(50)
+    w1.set_elmental(("Fire","Ice"),(500,400),True)
 
-
-
-
-
-
-
+  
 
 
 
