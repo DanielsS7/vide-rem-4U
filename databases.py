@@ -9,6 +9,7 @@ def weapon_data(key=None):
         {"name" : "Hammer", "Special_multiplyer" : 5.2, "Class" : "Blademaster"},
         {"name" : "Hunting Horn", "Special_multiplyer" : 5.2, "Class" : "Blademaster"},
         {"name" : "Insect Glaive", "Special_multiplyer" : 3.1, "Class" : "Blademaster"},
+        {"name" : "Switch Axe", "Special_multiplyer" : 5.4, "Class" : "Blademaster"},
         {"name" : "Charge Blade", "Special_multiplyer" : 3.6, "Class" : "Blademaster"},
         {"name" : "Heavy Bowgun", "Special_multiplyer" : 1.5, "Class" : "Gunner"},
         {"name" : "Light Bowgun", "Special_multiplyer" : 1.3, "Class" : "Gunner"},
