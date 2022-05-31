@@ -1,17 +1,11 @@
+import databases
+
 class Weapon:
 
     class Sharpness:
         
         def __init__(self) -> None:
-            self.sharpness = [
-                {"name" : "Red", "attack" : 0.5 ,"element" : 0.25 },
-                {"name" : "Orange", "attack" : 0.75 ,"element" : 0.50 },
-                {"name" : "Yellow", "attack" : 1 ,"element" : 0.75 },
-                {"name" : "Green", "attack" : 1.05 ,"element" : 1 },
-                {"name" : "Blue", "attack" : 1.2 ,"element" : 1.06 },
-                {"name" : "White", "attack" : 1.32 ,"element" : 1.12 },
-                {"name" : "Purple", "attack" : 1.44 ,"element" : 1.20 },
-            ]
+            self.sharpness = databases.sharpness_data()
 
         def set(self,sharpness):
             for sharpness_data in self.sharpness:
@@ -115,27 +109,13 @@ class Weapon:
     class Type:
 
         def __init__(self) -> None:
-            self.Types = [
-                {"Name" : "Great Sword", "Special_multiplyer" : 5.4, "Class" : "Blademaster"},
-                {"Name" : "Long Sword", "Special_multiplyer" : 3.3, "Class" : "Blademaster"},
-                {"Name" : "Sword and Shield", "Special_multiplyer" : 1.4, "Class" : "Blademaster"},
-                {"Name" : "Dual Blades", "Special_multiplyer" : 1.4, "Class" : "Blademaster"},
-                {"Name" : "Lance", "Special_multiplyer" : 2.3, "Class" : "Blademaster"},
-                {"Name" : "Gunlance", "Special_multiplyer" : 2.3, "Class" : "Blademaster"},
-                {"Name" : "Hammer", "Special_multiplyer" : 5.2, "Class" : "Blademaster"},
-                {"Name" : "Hunting Horn", "Special_multiplyer" : 5.2, "Class" : "Blademaster"},
-                {"Name" : "Insect Glaive", "Special_multiplyer" : 3.1, "Class" : "Blademaster"},
-                {"Name" : "Charge Blade", "Special_multiplyer" : 3.6, "Class" : "Blademaster"},
-                {"Name" : "Heavy Bowgun", "Special_multiplyer" : 1.5, "Class" : "Gunner"},
-                {"Name" : "Light Bowgun", "Special_multiplyer" : 1.3, "Class" : "Gunner"},
-                {"Name" : "Bow", "Special_multiplyer" : 1.2, "Class" : "Gunner"}
-            ]
+            self.Types = databases.weapon_data()
             self.type_is_set = False
             
         def set(self,type):
             for weapon_data in self.Types:
-                if type == weapon_data["Name"]:
-                    self.name = weapon_data["Name"]
+                if type == weapon_data["name"]:
+                    self.name = weapon_data["name"]
                     self.multiplyer = weapon_data["Special_multiplyer"]
                     self.weapon_class = weapon_data["Class"] 
                     self.type_is_set = True
@@ -143,7 +123,7 @@ class Weapon:
         def get(self):
             if self.type_is_set:    
                 return {
-                        "Name" : self.name, 
+                        "name" : self.name, 
                         "Class" : self.weapon_class , 
                         "Special_Multiplyer" : self.multiplyer
                         }
@@ -267,8 +247,6 @@ class Weapon:
         self.element = self.Element()
         self.element.set(element,amount,self.sharpness.get()["element"],double)
 
-
-
     def set_affinity(self,affinity : int):
         self.affinity = self.Affinity()
         self.affinity.set(affinity)
@@ -283,6 +261,7 @@ if __name__ == "__main__":
     w1.set_attack(1000)
     w1.set_affinity(50)
     w1.set_elmental(("Fire","Ice"),(500,400),True)
+    print(w1.type.Types)
 
   
 
